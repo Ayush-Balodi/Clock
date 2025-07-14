@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>World Clock Converter</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #1e1e1e;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #ffffff;
+      height: 100vh;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .half {
+      flex: 1;
+      padding: 40px;
+      min-width: 50%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .left {
+      background-color: #121212;
+      border-right: 1px solid #333;
+    }
+
+    .right {
+      background-color: #202020;
+    }
+
+    .label {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+      color: #00ffff;
+    }
+
+    .clock {
+      font-size: 2rem;
+      margin: 10px 0 30px;
+      background: #282c34;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .converter {
+      background: #2d2d2d;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      margin-bottom: 30px;
+      color: #00ffff;
+    }
+
+    input[type="datetime-local"] {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      width: 80%;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .output {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #ffffff;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    /* 📱 MOBILE VIEW: Stack left & right halves vertically */
+    @media screen and (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .half {
+        min-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #333;
+      }
+
+      .left {
+        border-bottom: 1px solid #333;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Half: Clocks -->
+  <div class="half left">
+    <div class="label">Eastern Standard Time (EST)</div>
+    <div class="clock" id="est-clock">00:00:00</div>
+
+    <div class="label">Canada (Toronto)</div>
+    <div class="clock" id="canada-clock">00:00:00</div>
+
+    <div class="label">India Standard Time (IST)</div>
+    <div class="clock" id="ist-clock">00:00:00</div>
+  </div>
+
+  <!-- Right Half: Converters -->
+  <div class="half right">
+
+    <div class="converter">
+      <h2>Convert Local Time ➜ EST</h2>
+      <input type="datetime-local" id="datetime-input" />
+      <br>
+      <button onclick="convertToEST()">Convert</button>
+      <div class="output" id="est-time-output">EST Time will appear here.</div>
+    </div>
+
+    <div class="converter">
+      <h2>Convert EST Time ➜ IST</h2>
+      <input type="datetime-local" id="est-to-ist-input" />
+      <br>
+      <button onclick="convertESTtoIST()">Convert</button>
+      <div class="output" id="ist-time-output">IST Time will appear here.</div>
+    </div>
+
+  </div>
+
+  <script>
+    function updateClocks() {
+      const now = new Date();
+
+      const estTime = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+      const canadaTime = now.toLocaleTimeString('en-CA', { timeZone: 'America/Toronto' });
+      const istTime = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+      document.getElementById('est-clock').textContent = estTime;
+      document.getElementById('canada-clock').textContent = canadaTime;
+      document.getElementById('ist-clock').textContent = istTime;
+    }
+
+    setInterval(updateClocks, 1000);
+    updateClocks();
+
+    function convertToEST() {
+      const input = document.getElementById('datetime-input').value;
+
+      if (!input) {
+        document.getElementById('est-time-output').textContent = "Please select a date and time.";
+        return;
+      }
+
+      const localDate = new Date(input);
+
+      const estTime = localDate.toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour12: true
+      });
+
+      document.getElementById('est-time-output').textContent = `EST Time: ${estTime}`;
+    }
+
+    function convertESTtoIST() {
+      const input = document.getElementById('est-to-ist-input').value;
+
+      if (!input) {
+        document.getElementById('ist-time-output').textContent = "Please select a date and time.";
+        return;
+      }
+
+      const estDate = new Date(input);
+
+      const istTime = estDate.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour12: true
+      });
+
+      document.getElementById('ist-time-output').textContent = `IST Time: ${istTime}`;
+    }
+  </script>
+
+</body>
+</html>
