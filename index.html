@@ -131,7 +131,7 @@
   <div class="half right">
 
     <div class="converter">
-      <h2>Convert Local Time ➜ EST</h2>
+      <h2>Convert Local Time ➜ EST/EDT</h2>
       <input type="datetime-local" id="datetime-input" />
       <br>
       <button onclick="convertToEST()">Convert</button>
@@ -139,7 +139,7 @@
     </div>
 
     <div class="converter">
-      <h2>Convert EST Time ➜ IST</h2>
+      <h2>Convert EST/EDT Time ➜ IST</h2>
       <input type="datetime-local" id="est-to-ist-input" />
       <br>
       <button onclick="convertESTtoIST()">Convert</button>
@@ -147,7 +147,7 @@
     </div>
 
   </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
   <script>
     function updateClocks() {
       const now = new Date();
@@ -189,37 +189,30 @@
     }
 
     function convertESTtoIST() {
-      // input the date 
+
       const input = document.getElementById('est-to-ist-input').value;
 
-      // check whether it is not empty
       if (!input) {
-        document.getElementById('ist-time-output').textContent = "Please select a date and time.";
+        document.getElementById('ist-time-output').textContent = "⚠️This is a required field.";
         return;
       }
 
-      // Split date and time
-      const [date, time] = input.split("T");
+      const { DateTime } = luxon;
 
-      // Create proper EST datetime string
-      const estString = `${date}T${time}:00-05:00`;
-      
-      // created a date object
-      const estDate = new Date(estString);
-
-      const istTime = estDate.toLocaleString('en-IN', {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour12: true
+      // Parse input as New York local time
+      const estDate = DateTime.fromISO(input, {
+        zone: "America/New_York"
       });
 
-      document.getElementById('ist-time-output').textContent = `IST Time: ${istTime}`;
-    }
+      // Convert to IST
+      const istDate = estDate.setZone("Asia/Kolkata");
+
+      const formatted = istDate.toFormat(
+      "dd LLL yyyy hh:mm:ss a"
+      );
+
+      document.getElementById('ist-time-output').textContent = `IST Time: ${formatted}`;
+  }
   </script>
 
 </body>
