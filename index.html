@@ -165,10 +165,10 @@
     updateClocks();
 
     function convertToEST() {
-      const input = document.getElementById('datetime-input').value;
+      const input = document.getElementById('datetime-input').value;// input time selected
 
       if (!input) {
-        document.getElementById('est-time-output').textContent = "Please select a date and time.";
+        document.getElementById('est-time-output').textContent = "⚠️This is a required field.";
         return;
       }
 
@@ -189,14 +189,23 @@
     }
 
     function convertESTtoIST() {
+      // input the date 
       const input = document.getElementById('est-to-ist-input').value;
 
+      // check whether it is not empty
       if (!input) {
         document.getElementById('ist-time-output').textContent = "Please select a date and time.";
         return;
       }
 
-      const estDate = new Date(input);
+      // Split date and time
+      const [date, time] = input.split("T");
+
+      // Create proper EST datetime string
+      const estString = `${date}T${time}:00-05:00`;
+      
+      // created a date object
+      const estDate = new Date(estString);
 
       const istTime = estDate.toLocaleString('en-IN', {
         timeZone: 'Asia/Kolkata',
